@@ -1,0 +1,16 @@
+.employee-table th {
+    background-color: #021526; /* Bootstrap primary color */
+    color: white;
+}
+
+.employee-table th, .employee-table td {
+    text-align: center; /* Center align text in table cells */
+}
+
+.employee-table tbody tr:hover {
+    background-color: #f1f1f1; /* Light grey background on hover */
+}
+
+.employee-table td {
+    vertical-align: middle; /* Center align vertically */
+}
