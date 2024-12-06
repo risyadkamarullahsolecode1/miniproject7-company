@@ -131,7 +131,7 @@ const LeaveRequestDetails = () => {
           {leaveRequest.workflowActions && leaveRequest.workflowActions.length > 0 ? (
             leaveRequest.workflowActions.map((action, index) => (
               <tr key={index}>
-                <td>{action.actionDate || "N/A"}</td>
+                <td>{new Date(action.actionDate).toLocaleDateString()}</td>
                 <td>{action.actionBy || "N/A"}</td>
                 <td>{action.action || "N/A"}</td>
                 <td>{action.comments || "N/A"}</td>

@@ -13,6 +13,7 @@ const LeaveRequestForm = () => {
     reason: '',
     totalDays: 0,
   });
+  const [file, setFile] = useState(null); // State to hold the selected file
   const [errors, setErrors] = useState({});
   const [loading, setLoading] = useState(false);
 
@@ -63,6 +64,11 @@ const LeaveRequestForm = () => {
     setFormData({ ...formData, [name]: value });
   };
 
+  const handleFileChange = (e) => {
+    const selectedFile = e.target.files[0];
+    setFile(selectedFile);
+  };
+
   const handleSubmit = async (e) => {
     e.preventDefault();
     if (!validate()) {
@@ -72,7 +78,25 @@ const LeaveRequestForm = () => {
 
     setLoading(true);
     try {
-      const response = await apiClient.post('/LeaveRequest/submit', formData);
+      // Create FormData to submit form data and file
+      const leaveRequestData = new FormData();
+      leaveRequestData.append('requestName', formData.requestName);
+      leaveRequestData.append('description', formData.description);
+      leaveRequestData.append('startDate', formData.startDate);
+      leaveRequestData.append('endDate', formData.endDate);
+      leaveRequestData.append('leaveType', formData.leaveType);
+      leaveRequestData.append('reason', formData.reason);
+      leaveRequestData.append('totalDays', formData.totalDays);
+
+      // Append file if it's provided
+      if (file) {
+        leaveRequestData.append('file', file);
+      }
+
+      const response = await apiClient.post('/LeaveRequest/submit', leaveRequestData, {
+        headers: { 'Content-Type': 'multipart/form-data' }, // Set multipart form-data header
+      });
+
       toast.success(response.data.message || 'Leave request submitted successfully!');
       setFormData({
         requestName: '',
@@ -83,6 +107,7 @@ const LeaveRequestForm = () => {
         reason: '',
         totalDays: 0,
       });
+      setFile(null); // Clear file after successful submission
     } catch (error) {
       toast.error(error.response?.data?.message || 'An error occurred while submitting the request.');
     } finally {
@@ -91,10 +116,10 @@ const LeaveRequestForm = () => {
   };
 
   return (
-    <Container>
+    <Container className="mb-5 pb-5">
       <Row className="justify-content-md-center">
         <Col md={6}>
-          <h2>Submit Leave Request</h2>
+          <h2 className="text-center">Submit Leave Request</h2>
           <Form onSubmit={handleSubmit}>
             <Form.Group className="mb-3">
               <Form.Label>Request Name</Form.Label>
@@ -179,6 +204,15 @@ const LeaveRequestForm = () => {
                 isInvalid={!!errors.reason}
               />
               <Form.Control.Feedback type="invalid">{errors.reason}</Form.Control.Feedback>
+            </Form.Group>
+            <Form.Group className="mb-3">
+              <Form.Label>Medical Certificate (Optional)</Form.Label>
+              <Form.Control
+                type="file"
+                name="file"
+                onChange={handleFileChange}
+                accept=".pdf,.jpg,.jpeg"
+              />
             </Form.Group>
             <Button variant="primary" type="submit" disabled={loading}>
               {loading ? 'Submitting...' : 'Submit Request'}

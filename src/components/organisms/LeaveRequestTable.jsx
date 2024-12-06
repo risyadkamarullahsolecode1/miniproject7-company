@@ -41,6 +41,7 @@ const LeaveRequestTable = ({ leaveRequests }) => {
           <th>Reason</th>
           <th>Submission Date</th>
           <th>Status</th>
+          <th>File</th>
           <th>Actions</th>
         </tr>
       </thead>
@@ -54,8 +55,9 @@ const LeaveRequestTable = ({ leaveRequests }) => {
             <td>{request.totalDays}</td>
             <td>{request.leaveType}</td>
             <td>{request.reason}</td>
-            <td>{request.submissionDate}</td>
+            <td>{new Date(request.submissionDate).toLocaleDateString()}</td>
             <td>{renderStatus(request.status)}</td>
+            <td>{request.filePath}</td>
             <td>
             <Button
                 className="btn btn-primary btn-sm"
