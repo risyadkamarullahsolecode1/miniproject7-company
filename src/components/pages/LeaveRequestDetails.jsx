@@ -1,9 +1,29 @@
 import React, { useEffect, useState } from "react";
-import { Table, Button, Modal, Container, Form } from "react-bootstrap";
+import { Table, Button, Modal, Container, Form, Badge } from "react-bootstrap";
 import { useNavigate, useParams } from "react-router-dom";
 import { toast } from "react-toastify";
 import "react-toastify/dist/ReactToastify.css";
 import apiClient from "../../axiosconfig";
+
+// Helper function to render status indicators
+const renderStatus = (status) => {
+  switch (status) {
+    case "Under Review":
+      return <Badge bg="warning" text="dark">Under Review</Badge>;
+    case "Approved by Employee Supervisor":
+      return <Badge bg="primary">Accepted</Badge>;
+    case "Approved by HR Manager":
+      return <Badge bg="success">Accepted</Badge>;
+    case "Rejected by Employee Supervisor":
+      return <Badge bg="danger">Rejected</Badge>;
+    case "Rejected by HR Manager":
+      return <Badge bg="danger">Rejected</Badge>;
+    case "Pending Approval":
+      return <Badge bg="secondary">Pending</Badge>;
+    default:
+      return <Badge bg="secondary">Unknown</Badge>;
+  }
+};
 
 const LeaveRequestDetails = () => {
   const { processId } = useParams(); 
@@ -112,12 +132,12 @@ const LeaveRequestDetails = () => {
           </tr>
           <tr>
             <th>Status</th>
-            <td>{leaveRequest.status || "N/A"}</td>
+            <td>{renderStatus(leaveRequest.status)}</td>
           </tr>
         </tbody>
       </Table>
 
-      <h4>Workflow Actions</h4>
+      <h4>History</h4>
       <Table bordered>
         <thead>
           <tr>

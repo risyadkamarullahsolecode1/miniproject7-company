@@ -36,10 +36,13 @@ const LeaveRequestForm = () => {
   const validate = () => {
     const newErrors = {};
 
+    const today = new Date();
+    today.setHours(0, 0, 0, 0);
+
     // Start Date validation
     if (!formData.startDate) {
       newErrors.startDate = 'Start Date is required';
-    } else if (new Date(formData.startDate) < new Date()) {
+    } else if (new Date(formData.startDate) < today) {
       newErrors.startDate = 'Start Date must be today or a future date';
     }
 
@@ -50,9 +53,25 @@ const LeaveRequestForm = () => {
       newErrors.endDate = 'End Date must be equal to or after Start Date';
     }
 
+     // Leave Type validation
+     if (!formData.leaveType) {
+      newErrors.leaveType = 'Leave Type is required';
+    }
+
     // Reason validation
     if (!formData.reason) {
       newErrors.reason = 'Reason is required';
+    }
+
+    // File validation
+    if (formData.leaveType === 'Sick Leave' && formData.totalDays > 1) {
+      if (!file) {
+        newErrors.file = 'Medical Certificate is required for Sick Leave exceeding 1 day';
+      } else if (!['application/pdf', 'image/jpeg', 'image/jpg'].includes(file.type)) {
+        newErrors.file = 'File must be a PDF or JPG/JPEG';
+      } else if (file.size > 5 * 1024 * 1024) {
+        newErrors.file = 'File size must not exceed 5MB';
+      }
     }
 
     setErrors(newErrors);
@@ -212,7 +231,9 @@ const LeaveRequestForm = () => {
                 name="file"
                 onChange={handleFileChange}
                 accept=".pdf,.jpg,.jpeg"
+                isInvalid={!!errors.file}
               />
+              <Form.Control.Feedback type="invalid">{errors.file}</Form.Control.Feedback>
             </Form.Group>
             <Button variant="primary" type="submit" disabled={loading}>
               {loading ? 'Submitting...' : 'Submit Request'}

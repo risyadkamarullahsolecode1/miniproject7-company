@@ -32,7 +32,7 @@ const LeaveRequestTable = ({ leaveRequests }) => {
     <Table striped bordered hover responsive>
       <thead>
         <tr>
-          <th>#</th>
+          <th>No.</th>
           <th>Employee Name</th>
           <th>Start Date</th>
           <th>End Date</th>
